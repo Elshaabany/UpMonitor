@@ -13,6 +13,12 @@ const verifyJWT = util.promisify(jwt.verify);
 const { saltRounds, JWT_Secret } = require('../util/config');
 
 const userSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
     email: {
         type: String,
         required: true,
@@ -27,6 +33,10 @@ const userSchema = new Schema({
 });
 
 userSchema.pre('validate', async function (next) {
+
+    if (this.isModified('username')) {
+        if (await User.exists({ username: this.username })) throw new CustomError('username already exist', 400);
+    }
 
     if (this.isModified('email')) {
         if (await User.exists({ email: this.email })) throw new CustomError('email already exist', 400);
