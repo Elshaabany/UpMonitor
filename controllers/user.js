@@ -41,9 +41,13 @@ exports.postSignup = async (req, res, next) => {
 exports.postVerify = async (req, res, next) => {
 
     const code = req.body.code;
+    const user = req.user;
 
-    if (code === req.user.verificationCode) {
-        const user = req.user;
+    if (user.isVerified) {
+        res.status(400).json({
+            message: "this email is verified already"
+        })
+    } else if (code === user.verificationCode) {
         user.isVerified = true;
         await user.save();
         res.json({
@@ -54,7 +58,6 @@ exports.postVerify = async (req, res, next) => {
             message: "wrong verification code!"
         })
     }
-
 
 };
 
