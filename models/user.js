@@ -11,6 +11,7 @@ const singJWT = util.promisify(jwt.sign);
 const verifyJWT = util.promisify(jwt.verify);
 
 const { saltRounds, JWT_Secret } = require('../util/config');
+const { Number } = require('mongoose');
 
 const userSchema = new Schema({
     username: {
@@ -23,6 +24,16 @@ const userSchema = new Schema({
         type: String,
         required: true,
         unique: true
+    },
+
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+
+    verificationCode: {
+        type: Number,
+        require: true
     },
 
     password: {

@@ -1,6 +1,3 @@
-const check = require('../models/check');
-const CustomError = require('../helpers/CustomError');
-
 exports.postCheck = async (req, res, next) => {
 
 

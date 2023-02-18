@@ -5,10 +5,13 @@ const { senderMail } = require('../util/config');
 
 exports.postSignup = async (req, res, next) => {
 
+    const code = Math.floor(100000 + Math.random() * 900000);
+
     const user = await User.create({
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
+        verificationCode: code
     });
 
     const token = await user.generateToken();
@@ -20,22 +23,37 @@ exports.postSignup = async (req, res, next) => {
         html:
             `
             <h1> you successfully signed up!</h1>
-            <p> your verification code is: ${Math.floor(100000 + Math.random() * 900000)} </p>
+            <p> your verification code is: ${code} </p>
         `
     })
         .then(console.log)
         .catch(console.error);
 
-    res.json({ 
+    res.json({
         message: 'user created successfully',
         user,
         token,
-        redirectPath: "/user/verify" 
+        redirectPath: "/user/verify"
     });
 
 };
 
 exports.postVerify = async (req, res, next) => {
+
+    const code = req.body.code;
+
+    if (code === req.user.verificationCode) {
+        const user = req.user;
+        user.isVerified = true;
+        await user.save();
+        res.json({
+            message: "email verified successfully"
+        })
+    } else {
+        res.status(400).json({
+            message: "wrong verification code!"
+        })
+    }
 
 
 };

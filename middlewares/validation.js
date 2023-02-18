@@ -30,21 +30,3 @@ exports.mongoId = (id) => [
     check(id).isMongoId().withMessage('invalid ID'),
     handleErrors
 ];
-
-exports.product = [
-    body('name').isString().trim().notEmpty().escape().withMessage('enter valid name'),
-    body('price').customSanitizer(Number).custom(value => value > 0).withMessage('enter valid price'),
-    body('URL').trim().isURL().withMessage('enter valid URL'),
-    body('description').isString().trim().escape().withMessage('description not valid'),
-    handleErrors
-];
-
-exports.quantity = [
-    check('q').customSanitizer(Number).custom(value => value > 0).withMessage('invalid quantity'),
-    handleErrors
-];
-
-exports.orderStatus = [
-    body('status').isString().trim().notEmpty().escape().isIn(['pending', 'accepted', 'out-for-deleviry', 'delivered', 'canceled']).withMessage('enter valid status'),
-    handleErrors
-];
