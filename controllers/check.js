@@ -15,8 +15,12 @@ exports.postCheck = async (req, res, next) => {
 };
 
 exports.getChecks = async (req, res, next) => {
-
-
+    const tag = req.params.tag;
+    const checks = await Check.find({tags: tag, createdBy: req.user._id});
+    if(!check) throw new CustomError('no checks found', 404);
+    res.json({
+	checks
+    });
 };
 
 exports.getCheck = async (req, res, next) => {
