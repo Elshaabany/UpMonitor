@@ -1,9 +1,9 @@
-const { MongoURI } = require('./config');
-const mongoose = require('mongoose');
+import { MongoURI } from './config.js';
+import { set } from 'mongoose';
 
 async function main() {
-    await mongoose.set('strictQuery', true).connect(MongoURI);
-    console.log('connected to MongoDB successfully');
+	set('strictQuery', true).connect(MongoURI);
+	console.log('connected to MongoDB successfully');
 }
 
-module.exports = main;
+export default main;

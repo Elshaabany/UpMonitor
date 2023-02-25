@@ -1,15 +1,15 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const userController = require('../controllers/user');
+import { postSignup, postVerify, postSignin } from '../controllers/user.js';
 
-const {isAuth} = require('../middlewares/auth');
-const validator = require('../middlewares/validation');
+import { isAuth } from '../middlewares/auth.js';
+import { signUp, signIn } from '../middlewares/validation.js';
 
-router.post('/signup', validator.signUp, userController.postSignup);
+router.post('/signup', signUp, postSignup);
 
-router.post('/verify', isAuth,  userController.postVerify);
+router.post('/verify', isAuth,  postVerify);
 
-router.post('/signin', validator.signIn, userController.postSignin);
+router.post('/signin', signIn, postSignin);
 
-module.exports = router;
+export default router;

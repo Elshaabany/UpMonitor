@@ -1,9 +1,9 @@
-const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
-const { sendGrid_api } = require('./config');
+import { createTransport } from 'nodemailer';
+import sendgridTransport from 'nodemailer-sendgrid-transport';
+import { sendGrid_api } from './config.js';
 
-module.exports = nodemailer.createTransport(sendgridTransport({
-    auth: {
-        api_key: sendGrid_api
-    }
+export default createTransport(sendgridTransport({
+	auth: {
+		api_key: sendGrid_api
+	}
 }));

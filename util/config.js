@@ -1,11 +1,12 @@
-require('dotenv').config();
+import process from 'node:process';
+import dotenv from 'dotenv';
 
-module.exports = {
-    port: process.env.PORT || 3000,
-    saltRounds: process.env.saltRounds || 12,
-    MongoURI: process.env.MongodbURI,
-    JWT_Secret: process.env.JWT_Secret,
-    sendGrid_api: process.env.sendGrid_api_key,
-    senderMail: process.env.senderMail,
-    host: process.env.host || 'localhost',
-};
+dotenv.config();
+
+export const port = process.env.PORT || 3000;
+export const saltRounds = process.env.saltRounds || 12;
+export const MongoURI = process.env.MongodbURI;
+export const JWT_Secret = process.env.JWT_Secret;
+export const sendGrid_api = process.env.sendGrid_api_key;
+export const senderMail = process.env.senderMail;
+export const host = process.env.host || 'localhost';

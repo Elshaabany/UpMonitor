@@ -1,13 +1,13 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const reportController = require('../controllers/report');
-const { isAuth } = require('../middlewares/auth');
+import { getReports, getReport } from '../controllers/report.js';
+import { isAuth } from '../middlewares/auth.js';
 
 router.use(isAuth);
 
-router.get('/', reportController.getReports);
+router.get('/', getReports);
 
-router.get('/:checkId', reportController.getReport);
+router.get('/:checkId', getReport);
 
-module.exports = router;
+export default router;

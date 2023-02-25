@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Bosta's Backend assessment solution.",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node .",
     "dev": "nodemon .",
     "debug": "nodemon --inspect .",
+    "lint": "eslint . --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,6 +22,7 @@
   },
   "homepage": "https://github.com/Elshaabany/be-assessment#readme",
   "dependencies": {
+    "availability-monitor": "^1.1.4",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "dotenv": "^16.0.3",
@@ -32,5 +35,8 @@
     "nodemailer": "^6.9.1",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "nodemon": "^2.0.20"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0"
   }
 }

@@ -1,60 +1,56 @@
-const Check = require('../models/check');
-const CustomError = require('../helpers/CustomError');
+import Check from '../models/check.js';
+import CustomError from '../helpers/CustomError.js';
 
-exports.postCheck = async (req, res, next) => {
 
-    const check = await Check.create({
-       ...req.body,
-       createdBy: req.user._id
-    });
+export async function postCheck(req, res) {
 
-    res.json({
-        message: "check created successfully",
-        check
-    })
-};
+	const check = await Check.create({
+		...req.body,
+		createdBy: req.user._id
+	});
 
-exports.getChecks = async (req, res, next) => {
-    const tag = req.params.tag;
-    const checks = await Check.find({tags: tag, createdBy: req.user._id});
-    if(!check) throw new CustomError('no checks found', 404);
-    res.json({
-	checks
-    });
-};
+	res.json({
+		message: 'check created successfully',
+		check
+	});
+}
 
-exports.getCheck = async (req, res, next) => {
+// export async function getChecks(req, res) {
     
-    const check = await Check.findById(req.params.checkId);
-    if (!check) throw new CustomError('check not found', 404);
+// }
 
-    res.json({
-        check
-    })
-
-};
-
-exports.putCheck = async (req, res, next) => {
-
-    const check = await Check.findById(req.params.checkId);
-    if (!check) throw new CustomError('check not found', 404);
-
-    await check.updateOne(req.body);
-
-    res.json({
-        message: "check updated successfully",
-    });
-
-};
-
-exports.deleteCheck = async (req, res, next) => {
-
-    const check = await Check.findById(req.params.checkId);
-    if (!check) throw new CustomError('check not found', 404);
-
-    await check.delete();
+export async function getCheck(req, res) {
     
-    res.json({
-        message: "check deleted successfully"
-    })
-};
+	const check = await Check.findById(req.params.checkId);
+	if (!check) throw new CustomError('check not found', 404);
+
+	res.json({
+		check
+	});
+
+}
+
+export async function putCheck(req, res) {
+
+	const check = await Check.findById(req.params.checkId);
+	if (!check) throw new CustomError('check not found', 404);
+
+	await check.updateOne(req.body);
+
+	res.json({
+		message: 'check updated successfully',
+	});
+
+}
+
+export async function deleteCheck(req, res) {
+
+	const check = await Check.findById(req.params.checkId);
+	if (!check) throw new CustomError('check not found', 404);
+
+	await check.delete();
+    
+	res.json({
+		message: 'check deleted successfully'
+	});
+}

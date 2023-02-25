@@ -1,19 +1,19 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const checkController = require('../controllers/check');
-const { isAuth } = require('../middlewares/auth');
+import { postCheck, getCheck, putCheck, deleteCheck } from '../controllers/check.js';
+import { isAuth } from '../middlewares/auth.js';
 
 router.use(isAuth);
 
-router.post('/', checkController.postCheck);
+router.post('/', postCheck);
 
-router.get('/', checkController.getChecks);
+// router.get('/', getChecks);
 
-router.get('/:checkId', checkController.getCheck);
+router.get('/:checkId', getCheck);
 
-router.put('/:checkId', checkController.putCheck);
+router.put('/:checkId', putCheck);
 
-router.delete('/:checkId', checkController.deleteCheck);
+router.delete('/:checkId', deleteCheck);
 
-module.exports = router;
+export default router;

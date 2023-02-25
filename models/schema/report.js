@@ -1,33 +1,33 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const requiredNum = {          
-    type: Number,
-    min: 0,
-    required: true
+	type: Number,
+	min: 0,
+	required: true
 };
 
 const statusString = {
-    type: String,
-    enum: ['UP', 'DOWN'],
-    required: true
+	type: String,
+	enum: ['UP', 'DOWN'],
+	required: true
 };
 
 const reportSchema = new Schema({
-    status: statusString,
-    availabilityPercentage: requiredNum,
-    outagesTotalNum: requiredNum,
-    downtimeTotalSec: requiredNum,
-    uptimeTotalSec: requiredNum,
-    responseTimeAvgMs: requiredNum,
-    history: [{
-        timestamp: {
-            type: Date,
-            required: true
-        },
-        responseTime: requiredNum,
-        status: statusString
-    }]
+	status: statusString,
+	availabilityPercentage: requiredNum,
+	outagesTotalNum: requiredNum,
+	downtimeTotalSec: requiredNum,
+	uptimeTotalSec: requiredNum,
+	responseTimeAvgMs: requiredNum,
+	history: [{
+		timestamp: {
+			type: Date,
+			required: true
+		},
+		responseTime: requiredNum,
+		status: statusString
+	}]
 });
 
-module.exports = reportSchema;
+export default reportSchema;
