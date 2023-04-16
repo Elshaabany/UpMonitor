@@ -99,9 +99,21 @@ export async function postCheck(req, res) {
 	});
 }
 
-// export async function getChecks(req, res) {
+export async function getChecks(req, res) {
+
+	let page = req.query.page;
+	page = page > 0 ? page : 1;
+	let size = req.query.size;
+	size = size > 0 ? size : 0;
+
+	const checks = await Check.find({createdBy: req.user._id, tags: { $in: req.query.tags }}).skip((page - 1) * size).limit(size);
+	if (!checks) throw new CustomError('no checks found', 404);
+
+	res.json({
+		checks
+	});
     
-// }
+}
 
 export async function getCheck(req, res) {
     

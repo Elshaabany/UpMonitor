@@ -50,7 +50,7 @@ const checkSchema = new Schema({
 	}
 },{
 	toJSON: {
-		transform: (doc, ret) => _.omit(ret, ['__v'])
+		transform: (doc, ret) => _.omit(ret, ['__v','report'])
 	}
 });
 

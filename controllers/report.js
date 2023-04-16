@@ -3,13 +3,16 @@ import CustomError from '../helpers/CustomError.js';
 
 export async function getReports(req, res) {
 
-	const tag = req.params.tag;
-    
-	const checks = await Check.find({ tags: tag, createdBy: req.user._id });
+	let page = req.query.page;
+	page = page > 0 ? page : 1;
+	let size = req.query.size;
+	size = size > 0 ? size : 0;
+
+	const checks = await Check.find({createdBy: req.user._id, tags: { $in: req.query.tag }}).skip((page - 1) * size).limit(size);
 	if (!checks) throw new CustomError('no checks found', 404);
 
 	res.json({
-		checks
+		reports: checks.map(c => c.report)
 	});
 
 }
