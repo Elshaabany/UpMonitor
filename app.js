@@ -13,7 +13,7 @@ const app = express();
 app.use(json());
 app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 	next();
 });
@@ -22,7 +22,8 @@ app.use('/user', userRouter);
 app.use('/check', checkRouter);
 app.use('/report', reportRouter);
 
-app.use((err, req, res) => {
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
 	res.status(err.statusCode || 500).json({ message: err.message, errors: err.errors });
 });
 

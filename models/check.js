@@ -1,7 +1,5 @@
-import mongoose, { Schema as _Schema, model } from 'mongoose';
-import { Monitor } from 'availability-monitor';
-const { Schema } = mongoose;
-
+import { Schema , model } from 'mongoose';
+// import { Monitor } from 'availability-monitor';
 
 import reportSchema from './schema/report.js';
 
@@ -16,7 +14,7 @@ const checkSchema = new Schema({
 	},
 	protocol: {
 		type: String,
-		enum: ['HTTP', 'HTTPS', 'TCP'],
+		enum: ['http', 'https', 'tcp'],
 		required: true
 	},
 	path: String,
@@ -38,10 +36,7 @@ const checkSchema = new Schema({
 		username: String,
 		password: String
 	},
-	httpHeaders: [{
-		key: String,
-		value: String
-	}],
+	httpHeaders: {},
 	assert: {
 		statusCode: Number
 	},
@@ -49,56 +44,10 @@ const checkSchema = new Schema({
 	ignoreSSL: Boolean,
 	report: reportSchema,
 	createdBy: {
-		type: _Schema.Types.ObjectId,
+		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true
 	}
-});
-
-checkSchema.post('save', async function () {
-
-	const URLMonitor = new Monitor({
-
-		protocol: this.protocol == 'TCP' ? 'tcp' : 'web',
-		protocolOptions: {
-			url: this.url,
-			engine: 'got',
-			httpOptions: {
-				protocol: this.protocol.toLowerCase().concat(':'),
-				port: this.port,
-				path: this.path,
-				timeout: this.timeoutPerSec * 1000,
-				headers: {
-					authentication: this.authentication,
-					// add http Headers
-				}
-			},
-			ignoreSSL: this.ignoreSSL,
-			expect: {
-				statusCode: this.assert.statusCode || 200
-			}
-		},
-		interval: this.intervalPerMin * 60000
-	});
-
-	URLMonitor.on('start', function (monitor, response) {
-		// Do something with the response
-		// console.log(monitor,response);
-		console.log(`BBC News is up. Response Time: ${response.duration}ms`);
-	});
-
-	URLMonitor.on('up', function (monitor, response) {
-		// Do something with the response
-		// console.log(monitor,response);
-		console.log(`BBC News is up. Response Time: ${response.duration}ms`);
-	});
-
-	URLMonitor.on('error', function (monitor, response) {
-		// Do something on error
-		// console.log(monitor,response);
-		console.log(`Could not connect to BBC News. Error: ${response}`);
-	});
-	
 });
 
 export default model('Check', checkSchema);

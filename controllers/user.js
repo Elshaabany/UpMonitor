@@ -18,18 +18,18 @@ export async function postSignup(req, res) {
 
 	const token = await user.generateToken();
 
-	sendMail({
-		to: req.body.email,
-		from: senderMail,
-		subject: 'verification code',
-		html:
-            `
-            <h1> you successfully signed up!</h1>
-            <p> your verification code is: ${code} </p>
-        `
-	})
-		.then(console.log)
-		.catch(console.error);
+	// sendMail({
+	// 	to: req.body.email,
+	// 	from: senderMail,
+	// 	subject: 'verification code',
+	// 	html:
+    //         `
+    //         <h1> you successfully signed up!</h1>
+    //         <p> your verification code is: ${code} </p>
+    //     `
+	// })
+	// 	.then(console.log)
+	// 	.catch(console.error);
 
 	res.json({
 		message: 'user created successfully',

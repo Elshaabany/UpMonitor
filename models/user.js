@@ -12,6 +12,7 @@ const verifyJWT = promisify(verify);
 
 import { saltRounds, JWT_Secret } from '../util/config.js';
 
+
 const userSchema = new Schema({
 	username: {
 		type: String,
@@ -57,7 +58,7 @@ userSchema.pre('validate', async function (next) {
 userSchema.pre('save', async function (next) {
 
 	if (this.isModified('password')) {
-		this.password = hash(this.password, saltRounds);
+		this.password = await hash(this.password, saltRounds);
 	}
 	next();
 });
@@ -67,7 +68,7 @@ userSchema.methods.checkPassword = function (plainPassword) {
 };
 
 userSchema.methods.generateToken = function () {
-	return singJWT({ id: this.id }, JWT_Secret, { expiresIn: '1h' });
+	return singJWT({ id: this.id }, JWT_Secret, { expiresIn: '10h' });
 };
 
 userSchema.statics.getUserFromToken = async function (token) {

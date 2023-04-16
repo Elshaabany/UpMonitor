@@ -4,11 +4,11 @@ const router = Router();
 import { postSignup, postVerify, postSignin } from '../controllers/user.js';
 
 import { isAuth } from '../middlewares/auth.js';
-import { signUp, signIn } from '../middlewares/validation.js';
+import { signUp, signIn, verificationCode } from '../middlewares/validation.js';
 
 router.post('/signup', signUp, postSignup);
 
-router.post('/verify', isAuth,  postVerify);
+router.post('/verify', verificationCode, isAuth,  postVerify);
 
 router.post('/signin', signIn, postSignin);
 
