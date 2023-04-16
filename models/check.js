@@ -1,5 +1,5 @@
 import { Schema , model } from 'mongoose';
-// import { Monitor } from 'availability-monitor';
+import _ from 'lodash';
 
 import reportSchema from './schema/report.js';
 
@@ -47,6 +47,10 @@ const checkSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'User',
 		required: true
+	}
+},{
+	toJSON: {
+		transform: (doc, ret) => _.omit(ret, ['__v'])
 	}
 });
 

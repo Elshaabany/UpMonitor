@@ -3,7 +3,7 @@ import { promisify } from 'util';
 import { hash, compare } from 'bcrypt';
 import jwt from 'jsonwebtoken';
 const { sign, verify } = jwt;
-// import _ from 'lodash';
+import _ from 'lodash';
 
 import CustomError from '../helpers/CustomError.js';
 
@@ -41,6 +41,10 @@ const userSchema = new Schema({
 		require: true
 	},
 
+},{
+	toJSON: {
+		transform: (doc, ret) => _.pick(ret, ['username', 'email', '_id'])
+	}
 });
 
 userSchema.pre('validate', async function (next) {

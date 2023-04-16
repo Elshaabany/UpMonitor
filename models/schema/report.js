@@ -1,4 +1,5 @@
 import { Schema }  from 'mongoose';
+import _ from 'lodash';
 
 const requiredNum = {          
 	type: Number,
@@ -27,6 +28,10 @@ const reportSchema = new Schema({
 		responseTime: requiredNum,
 		status: statusString
 	}]
+},{
+	toJSON: {
+		transform: (doc, ret) => _.omit(ret, ['_id'])
+	}
 });
 
 export default reportSchema;

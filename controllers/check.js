@@ -46,6 +46,10 @@ export async function postCheck(req, res) {
 	URLMonitor.on('up', async function (monitor, response) {
 		
 		check = await Check.findById(check._id);
+		if(!check) {
+			monitor.stop();
+			return;
+		}
 		check.report = {
 			status: 'UP',
 			history: [...check.report.history,{
@@ -67,6 +71,10 @@ export async function postCheck(req, res) {
 	URLMonitor.on('error', async function (monitor, response) {
 		
 		check = await Check.findById(check._id);
+		if(!check) {
+			monitor.stop();
+			return;
+		}
 		check.report = {
 			status: 'DOWN',
 			history: [...check.report.history,{
