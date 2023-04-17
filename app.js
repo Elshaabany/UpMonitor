@@ -3,6 +3,8 @@ import { host, port } from './util/config.js';
 import db from './util/db.js';
 import express, { json } from 'express';
 import 'express-async-errors';
+import Check from './models/check.js';
+import createMonitor from './util/monitor.js';
 
 import userRouter from './router/user.js';
 import checkRouter from './router/check.js';
@@ -17,6 +19,11 @@ app.use((req, res, next) => {
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 	next();
 });
+
+( async () => {
+	const checks = await Check.find();
+	checks.forEach(check => createMonitor(check));
+})();
 
 app.use('/user', userRouter);
 app.use('/check', checkRouter);
