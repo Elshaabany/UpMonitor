@@ -1,8 +1,40 @@
 import Check from '../models/check.js';
+import User from '../models/user.js';
 import { Monitor } from 'availability-monitor';
+import { transport } from '../util/mail.js';
+import { senderMail } from '../util/config.js';
+import axios from 'axios';
 
 
-export default function createMonitor(check) {
+const notify = (user, msg, check) => {
+	transport.sendMail({
+		to: user.email,
+		from: senderMail,
+		subject: 'URL status update',
+		html: `<h2> ${msg} </h2>`
+	})
+		.then(console.log)
+		.catch(console.log);
+
+	if(check.webhook){
+		
+		const payload = {
+			message: msg
+		};
+
+		axios.post(check.webhook, payload)
+			.then(response => {
+				console.log(`statusCode: ${response.status}`);
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	}
+};
+
+export default async function createMonitor(check) {
+
+	const user = await User.findById(check.createdBy);
 
 	const URLMonitor = new Monitor({
 
@@ -16,7 +48,8 @@ export default function createMonitor(check) {
 				path: check.path,
 				timeout: check.timeoutPerSec * 1000,
 				headers: {
-					...check.authentication,							// check autthentication format
+					// eslint-disable-next-line no-undef
+					Authorization: Buffer.from('Basic '.concat(check.authentication.username.concat(':').concat(check.authentication.password))).toString('base64'),
 					...check.httpHeaders
 				}
 			},
@@ -35,6 +68,11 @@ export default function createMonitor(check) {
 			monitor.stop();
 			return;
 		}
+
+		if(check.report.history.length == 0 || check.report.history.at(-1).status === 'DOWN'){
+			notify(user, `your URL ${check.name} is now Up!`, check);
+		}
+
 		check.report = {
 			status: 'UP',
 			history: [...check.report.history,{
@@ -50,7 +88,7 @@ export default function createMonitor(check) {
 		};
 		await check.save();
         
-		console.log(`web site is up from up event handler. Response Time: ${response.duration}ms`);
+		console.log(`URL is up from up event handler. Response Time: ${response.duration}ms`);
 	});
 
 	URLMonitor.on('error', async function (monitor, response) {
@@ -60,6 +98,11 @@ export default function createMonitor(check) {
 			monitor.stop();
 			return;
 		}
+
+		if(check.report.history.length == 0 || check.report.history.at(-1).status === 'UP'){
+			notify(user, `your URL ${check.name} is Down now!`, check);
+		}
+
 		check.report = {
 			status: 'DOWN',
 			history: [...check.report.history,{
@@ -75,6 +118,6 @@ export default function createMonitor(check) {
 		};
 		await check.save();
 
-		console.log(`web site is down from down event handler. Response Time: ${response.duration}ms`);
+		console.log(`URL is down from down event handler. Response Time: ${response.duration}ms`);
 	});
 }

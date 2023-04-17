@@ -3,8 +3,6 @@ import CustomError from '../helpers/CustomError.js';
 import { transport } from '../util/mail.js';
 import { senderMail } from '../util/config.js';
 
-// const { sendMail } = mailer;
-
 export async function postSignup(req, res) {
 
 	const code = Math.floor(100000 + Math.random() * 900000);
