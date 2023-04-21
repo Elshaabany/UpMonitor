@@ -4,6 +4,6 @@ import nodemailerSendgrid from 'nodemailer-sendgrid';
 
 export const transport = createTransport(
 	nodemailerSendgrid({
-		apiKey: sendGrid_api
+		apiKey: sendGrid_api,
 	})
 );

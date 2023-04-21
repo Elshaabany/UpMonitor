@@ -3,7 +3,7 @@ const router = Router();
 
 import { getReports, getReport } from '../controllers/report.js';
 import { isAuth } from '../middlewares/auth.js';
-import {  mongoId } from '../middlewares/validation.js';
+import { mongoId } from '../middlewares/validation.js';
 
 router.use(isAuth);
 

@@ -8,7 +8,7 @@ import { signUp, signIn, verificationCode } from '../middlewares/validation.js';
 
 router.post('/signup', signUp, postSignup);
 
-router.post('/verify', verificationCode, isAuth,  postVerify);
+router.post('/verify', verificationCode, isAuth, postVerify);
 
 router.post('/signin', signIn, postSignin);
 

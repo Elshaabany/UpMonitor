@@ -1,7 +1,13 @@
 import { Router } from 'express';
 const router = Router();
 
-import { postCheck, getCheck, getChecks, putCheck, deleteCheck } from '../controllers/check.js';
+import {
+	postCheck,
+	getCheck,
+	getChecks,
+	putCheck,
+	deleteCheck,
+} from '../controllers/check.js';
 import { isAuth } from '../middlewares/auth.js';
 import { validCheck, mongoId } from '../middlewares/validation.js';
 
