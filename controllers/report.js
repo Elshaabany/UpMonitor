@@ -13,7 +13,7 @@ export async function getReports(req, res) {
 	})
 		.skip((page - 1) * size)
 		.limit(size);
-	if (checks.length === 0) throw new CustomError('no checks found', 404);
+	// if (checks.length === 0) throw new CustomError('no checks found', 404);
 
 	res.json({
 		reports: checks.map((c) => c.report),

@@ -5,6 +5,8 @@ import createMonitor from '../util/monitor.js';
 export async function postCheck(req, res) {
 	let check = await Check.create({
 		...req.body,
+		timeoutPerSec: req.body.timeout,
+		intervalPerMin: req.body.interval,
 		report: {
 			status: 'DOWN',
 			availabilityPercentage: 0,
@@ -31,12 +33,25 @@ export async function getChecks(req, res) {
 	let size = req.query.size;
 	size = size > 0 ? size : 0;
 
-	const checks = await Check.find({
-		createdBy: req.user._id,
-		tags: { $in: req.query.tags },
-	})
-		.skip((page - 1) * size)
-		.limit(size);
+	let checks;
+
+	if (req.query.tags) {
+		const tags = req.query.tags.split(',');
+
+		checks = await Check.find({
+			createdBy: req.user._id,
+			tags: { $in: tags },
+		})
+			.skip((page - 1) * size)
+			.limit(size);
+	} else {
+		checks = await Check.find({
+			createdBy: req.user._id,
+		})
+			.skip((page - 1) * size)
+			.limit(size);
+	}
+
 	if (checks.length === 0) throw new CustomError('no checks found', 404);
 
 	res.json({

@@ -24,7 +24,7 @@ const notify = (user, msg, check) => {
 		axios
 			.post(check.webhook, payload)
 			.then((response) => {
-				console.log(`statusCode: ${response.status}`);
+				console.log(`webhook sent successfully statusCode: ${response.status}`);
 			})
 			.catch((error) => {
 				console.error(error);
@@ -34,6 +34,13 @@ const notify = (user, msg, check) => {
 
 export default async function createMonitor(check) {
 	const user = await User.findById(check.createdBy);
+	let auth;
+	if (Object.keys(check.authentication).length !== 0) {
+		// eslint-disable-next-line no-undef
+		auth = Buffer.from(
+			`Basic ${check.authentication.username}:${check.authentication.password}`
+		).toString('base64');
+	}
 
 	const URLMonitor = new Monitor({
 		protocol: check.protocol == 'TCP' ? 'tcp' : 'web',
@@ -46,14 +53,7 @@ export default async function createMonitor(check) {
 				path: check.path,
 				timeout: check.timeoutPerSec * 1000,
 				headers: {
-					// eslint-disable-next-line no-undef
-					Authorization: Buffer.from(
-						'Basic '.concat(
-							check.authentication.username
-								.concat(':')
-								.concat(check.authentication.password)
-						)
-					).toString('base64'),
+					Authorization: auth || undefined,
 					...check.httpHeaders,
 				},
 			},
@@ -62,7 +62,7 @@ export default async function createMonitor(check) {
 				statusCode: check.assert.statusCode || 200,
 			},
 		},
-		interval: (check.intervalPerMin / 100) * 60000,
+		interval: check.intervalPerMin * 60000,
 	});
 
 	URLMonitor.on('up', async function (monitor, response) {
@@ -72,10 +72,7 @@ export default async function createMonitor(check) {
 			return;
 		}
 
-		if (
-			check.report.history.length == 0 ||
-			check.report.history.at(-1).status === 'DOWN'
-		) {
+		if (check.report.history.length == 0 || check.report.history.at(-1).status === 'DOWN') {
 			notify(user, `your URL ${check.name} is now Up!`, check);
 		}
 
@@ -91,28 +88,18 @@ export default async function createMonitor(check) {
 			],
 			outagesTotalNum: check.report.outagesTotalNum || 0,
 			downtimeTotalSec: check.report.downtimeTotalSec || 0,
-			uptimeTotalSec:
-				check.report.uptimeTotalSec + check.intervalPerMin * 60 || 0,
+			uptimeTotalSec: check.report.uptimeTotalSec + check.intervalPerMin * 60 || 0,
 			responseTimeAvgMs:
-				check.report.history.reduce(
-					(p, c) => (c.status === 'UP' ? p + c.responseTime : p),
-					0
-				) /
-					(check.report.history.length - check.report.outagesTotalNum) ||
-				response.duration,
+				check.report.history.reduce((p, c) => (c.status === 'UP' ? p + c.responseTime : p), 0) /
+					(check.report.history.length - check.report.outagesTotalNum) || response.duration,
 			availabilityPercentage:
-				(check.report.history.reduce(
-					(p, c) => (c.status === 'UP' ? (p += 1) : p),
-					0
-				) /
+				(check.report.history.reduce((p, c) => (c.status === 'UP' ? (p += 1) : p), 0) /
 					check.report.history.length) *
 					100 || 0,
 		};
 		await check.save();
 
-		console.log(
-			`URL is up from up event handler. Response Time: ${response.duration}ms`
-		);
+		console.log(`URL is up. Response Time: ${response.duration}ms`);
 	});
 
 	URLMonitor.on('error', async function (monitor, response) {
@@ -122,10 +109,7 @@ export default async function createMonitor(check) {
 			return;
 		}
 
-		if (
-			check.report.history.length == 0 ||
-			check.report.history.at(-1).status === 'UP'
-		) {
+		if (check.report.history.length == 0 || check.report.history.at(-1).status === 'UP') {
 			notify(user, `your URL ${check.name} is Down now!`, check);
 		}
 
@@ -140,22 +124,16 @@ export default async function createMonitor(check) {
 				},
 			],
 			outagesTotalNum: (check.report.outagesTotalNum += 1 || 1),
-			downtimeTotalSec:
-				check.report.downtimeTotalSec + check.intervalPerMin * 60 || 0,
+			downtimeTotalSec: check.report.downtimeTotalSec + check.intervalPerMin * 60 || 0,
 			uptimeTotalSec: check.report.uptimeTotalSec || 0,
 			responseTimeAvgMs: check.report.responseTimeAvgMs,
 			availabilityPercentage:
-				(check.report.history.reduce(
-					(p, c) => (c.status === 'UP' ? (p += 1) : p),
-					0
-				) /
+				(check.report.history.reduce((p, c) => (c.status === 'UP' ? (p += 1) : p), 0) /
 					check.report.history.length) *
 					100 || 0,
 		};
 		await check.save();
 
-		console.log(
-			`URL is down from down event handler. Response Time: ${response.duration}ms`
-		);
+		console.log(`URL is down. Response Time: ${response.duration}ms`);
 	});
 }

@@ -20,7 +20,7 @@ export const signUp = [
 	body('username')
 		.isAlphanumeric('en-US', { ignore: '.-_' })
 		.withMessage(
-			"username can only contain Alphanumerics and '.' or '-' or '_'"
+			'username can only contain Alphanumerics and \'.\' or \'-\' or \'_\''
 		),
 	checkEmail,
 	checkPassword().withMessage(
@@ -28,7 +28,7 @@ export const signUp = [
 	),
 	body('confirmPassword')
 		.custom((value, { req }) => value === req.body.password)
-		.withMessage("password doesn't match"),
+		.withMessage('password doesn\'t match'),
 	handleErrors,
 ];
 
