@@ -56,3 +56,5 @@ Build an uptime monitoring RESTful API server that allows authenticated users to
 - [Pushover](https://pushover.net/) integration to receive alerts on mobile devices.
 
 Try your best to implement as much as you can from the given requirements and feel free to add more if you want to.
+
+Edit for testing verified commit
